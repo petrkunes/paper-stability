@@ -8,13 +8,13 @@ This repository makes all analytic scripts, relevant data, and supporting docume
 
 ## Table of Contents
 
--   Project Structure
--   Requirements
--   Setup Instructions
--   How to Reproduce Analyses
--   File Descriptions
--   Citing This Work
--   Contact
+-   [Project Structure]
+-   [Requirements]
+-   [Setup Instructions]
+-   [How to Reproduce Analyses]
+-   [File Descriptions]
+-   [Citing This Work]
+-   [Contact]
 
 ## Project Structure
 
