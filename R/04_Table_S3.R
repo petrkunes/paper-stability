@@ -1,0 +1,1 @@
+knitr::kable(test_each.adj[order (test_each.adj$Variance, decreasing = TRUE),], digits = 3)

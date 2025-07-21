@@ -1,0 +1,1 @@
+corrplot(abs(cor(CER_data_ord$env %>% select(Charcoal, Stability, Richness, Diversity, Disturbance, ROC, `bio01 1016m`, `K/Ti`) %>% rename(MAT = `bio01 1016m`))), method = "shade", type = "full", is.corr = FALSE)
