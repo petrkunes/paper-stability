@@ -144,8 +144,8 @@ All main and supplementary analyses are scripted and reproducible.
 | `data_in/CER_CHELSA.xlsx`           | CHELSA paleoclimate model for the region of Černé jezero                                                                     |
 | `data_in/CER_pollen_corr.xlsx`      | Sedimentary pollen data from Černé jezero                                                                                    |
 | `data_in/CER_XRF_15-2-1.xlsx`       | Sedimentary XRF data from Černé jezero from separate core drives                                                             |
-| `data_in/CER_XRF_15-2-2.xlsx`       |                                                                                                                              |
-| `data_in/CER_XRF_GC.xlsx`           |                                                                                                                              |
+| `data_in/CER_XRF_15-2-2.xlsx`       | Sedimentary XRF data from Černé jezero from separate core drives                                                             |
+| `data_in/CER_XRF_GC.xlsx`           | Sedimentary XRF data from Černé jezero from separate core drives                                                             |
 | `data_in/EPD_P_VARS_high3_mod.xlsx` | EPD synonym and hierarchy table, compiled based on the taxonomy of the EPD-2015 version, with additions made for this study. |
 | `data_in/taxa.xlsx`                 | List of pollen taxa used for creating the pollen diagram                                                                     |
 | `R/__Init_project__.R`              | Installs required R packages (run only once)                                                                                 |
