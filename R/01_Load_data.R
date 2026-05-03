@@ -15,6 +15,8 @@
 # Cerne jezero pollen data
 CER_pollen <- tilia_trans(read_excel("data_in/CER_pollen_corr.xlsx"))
 CER_pollen <- tilia_select(CER_pollen, agemin = -70, agemax = 11700) # select only studied period
+trees <- read_excel("data_in/taxa.xlsx")
+herbs <- read_excel("data_in/taxa.xlsx", sheet = "herbs")
 
 # Cerne jezero charcoal data
 CER_char <- tilia_trans(read_excel("data_in/CER_char_corr.xlsx"))

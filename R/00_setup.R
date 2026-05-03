@@ -18,11 +18,15 @@
 #--------------------------------------------------------------------------#
 
 package_list <- c(
+  "car",
   "corrplot",
   "Hmisc",
+  "ggcorrplot",
   "ggplot2",
   "ggrepel",
   "ggvegan",
+  "mvgam",
+  "nlme",
   "openxlsx",
   "PolEco",
   "RColorBrewer",

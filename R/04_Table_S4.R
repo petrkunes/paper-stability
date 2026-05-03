@@ -3,7 +3,7 @@
 #
 # Long-term biodiversity–stability relationship in temperate mountain forests  
 #                            Supplementary Material
-#                      Table S3: Variance inflation factors
+#                      Table S4: RDA explained variance
 #
 #                                  Petr Kuneš
 #                                     2025
@@ -11,4 +11,4 @@
 #
 #------------------------------------------------------------------------------#
 
-knitr::kable(CER.env.test, col.names = c("Variable", "VIF"))
+knitr::kable(CER.RDA.anova, digits = 3)

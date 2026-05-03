@@ -1,7 +1,14 @@
-CER_geochron <- info$dets %>% 
-  mutate(`14C age [BP]`= case_when(cc==1 ~ paste(age, error, sep = " ± "))) %>%
-  mutate(`210Pb age [cal. BP]`= case_when(cc==0 ~ paste(age, error, sep = " ± "))) %>%
-  select(labID, depth, `210Pb age [cal. BP]`, `14C age [BP]`) %>%
-  replace(is.na(.), '')
-colnames(CER_geochron)[1:2] <- c("Laboratory ID", "Depth [cm b.w.l.]")
-knitr::kable(CER_geochron, align = c('l','r','r','r'))
+#------------------------------------------------------------------------------#
+#
+#
+# Long-term biodiversity–stability relationship in temperate mountain forests  
+#
+#                   Table 1: Stability and population change
+#
+#                                  Petr Kuneš
+#                                     2025
+#
+#
+#------------------------------------------------------------------------------#
+
+knitr::kable(CER_stab_pop, digits = c(0,0,0,0,2))

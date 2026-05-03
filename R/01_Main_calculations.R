@@ -92,7 +92,6 @@ CER_CPA$Zones <- CER_CPA$Zones %>% left_join(CER_age)
 
 # source("02_Calculate_ROC.r")
 
-# CER_ROC <- read_excel("data_out/CER_ROC.xlsx")
 CER_ROC <- readRDS("data_out/CER_ROC.rds")
 
 ## Merge data for ordination ----
@@ -120,53 +119,83 @@ CER_data_ord$env <- CER_data_ord$env %>%
 
 colnames(CER_data_ord$env)[c(24)] <- "Disturbance"
 colnames(CER_data_ord$env)[c(27)] <- "K/Ti"
+colnames(CER_data_ord$env)[c(16)] <- "MAT"
+
+### Join NPPs
+CER_data_ord$env <- CER_data_ord$env %>% 
+  left_join(CER_perc_NPP)
 
 CER_data_ord$env <- CER_data_ord$env[-130,]
 CER_data_ord$pollen <- CER_data_ord$pollen[-130,]
-
+CER_data_ord$pollen <- CER_data_ord$pollen[,colSums(CER_data_ord$pollen)>0]
 
 ## Ordination ----
 
+# Check gradient length
 CER.dca <- decorana(CER_data_ord$pollen[,-1], iweigh = 1)
 
+CER_data_ord$envst <- decostand(CER_data_ord$env %>% select(Charcoal, Stability, Richness, Diversity, ROC, Disturbance, `K/Ti` , MAT, `Dung fungi`, Ustulina), method = "standardize")
+
 # Check for colinearity
-# heatmap(abs(cor(CER_data_ord$env %>% select(CHAR, Stab, Racc, Dsim, JulT, DF, ROC, `K/Ti`, `bio01 1016m`))))
+CER.rda.test <- rda(decostand(CER_data_ord$pollen[,-1], method = "hellinger") ~ Charcoal + Stability + Richness + Diversity + Disturbance + ROC + `K/Ti` + MAT + `Dung fungi`+ Ustulina, data = CER_data_ord$env %>% select(Charcoal, Stability, Richness, Diversity, Disturbance, ROC, `K/Ti`, MAT, `Dung fungi`, Ustulina))
+CER.env.test <- vif.cca(CER.rda.test)
 
-CER_data_ord$envst <- decostand(CER_data_ord$env %>% select(Charcoal, Stability, Richness, Diversity, ROC, Disturbance, `bio01 1016m`) %>% rename(MAT = `bio01 1016m`), method = "standardize")
+### RDA without detrending ----
 
-CER.rda <- rda(decostand(CER_data_ord$pollen[,-1], method = "hellinger") ~ Charcoal + Stability + Richness + Diversity + Disturbance + ROC + MAT, data = CER_data_ord$envst)
+# CER.rda <- rda(decostand(CER_data_ord$pollen[,-1], method = "hellinger") ~ Charcoal + Stability + Richness + Diversity + Disturbance + ROC + MAT, data = CER_data_ord$envst)
 
-# RsquareAdj(CER.rda)$adj.r.squared
-# CER.rda$CCA$tot.chi
+# RDA without covariable
+# CER.rda <- rda(decostand(CER_data_ord$pollen[,-1], method = "hellinger") ~ Charcoal + Stability + Richness + Diversity + Disturbance + ROC + `K/Ti` + MAT, data = CER_data_ord$env %>% select(Charcoal, Stability, Richness, Diversity, Disturbance, ROC, `K/Ti`, MAT))
 
-CER.RDA.species <- CER_data_ord$pollen %>% select(-depth) %>%
-  select(order(colSums(.), decreasing = T))
-
-CER.RDA.test <- anova(CER.rda, by = "axis")
+# RDA with covariable
+CER.rda <- rda(decostand(CER_data_ord$pollen[,-1], method = "hellinger") ~ Charcoal + Stability + Richness + Diversity + Disturbance + ROC + `K/Ti` + MAT + Condition(`#Chron1`), data = CER_data_ord$env %>% select(`#Chron1`, Charcoal, Stability, Richness, Diversity, Disturbance, ROC, `K/Ti`, MAT))
 
 
-# take each of the 14 variables one by one, calculate tb-RDA on it using pollen data
-# test it's significance, return all values in one summary table
-# correct them for the multiple-testing issue by Holm's correction
-# and order the table by decreasing value of variance explained by each variable
 
-test_each <- t(apply (CER_data_ord$envst %>% select(Charcoal, Stability, Richness, Diversity, ROC, Disturbance, MAT), 2, FUN = function (x) as.matrix (anova (rda (decostand(CER_data_ord$pollen[,-1], method = "hellinger") ~ x))[1:4][1,])))
-test_each <- as.data.frame (test_each)
-names (test_each) <- c("Df", "Variance", "F", "Pr(>F)")
-test_each.adj <- test_each
-test_each.adj$`Pr(>F)` <- p.adjust (test_each$`Pr(>F)`, method = 'holm')
+CER.RDA.anova <- anova(CER.rda, by = "axis")
+CER.RDA.anova.var <- anova(CER.rda, by = "margin") %>% arrange(desc(F))
 
 CER_scores <- fortify(CER.rda)
+CER.RDA.species <- CER_data_ord$pollen %>% select(-depth) %>%
+  select(order(colSums(.), decreasing = T))
 CER_species <- head(colnames(CER.RDA.species), 14)
-
 CER_spec_scores <- subset(CER_scores, score == "species" & label %in% CER_species)
 CER_env_scores <- subset(CER_scores, score == "biplot")
 
 
-## Test correlation of environmental variabless ----
-CER_corr <- rcorr(as.matrix(CER_data_ord$envst %>% select(Charcoal, Richness, Diversity, Disturbance, ROC, Stability, MAT)), type = "pearson")
+## Test correlation of environmental variables ----
+CER_corr <- rcorr(as.matrix(CER_data_ord$envst %>% select(Charcoal, Richness, Diversity, Disturbance, ROC, Stability, MAT, `K/Ti`)), type = "pearson")
 diag(CER_corr$P) <- 0
 
-# save.image("data_out/CER_data_2.RData")
+# Model each environmental variable as a function of time
+# Take residuals (which are approximately “de‑trended” and have reduced autocorrelation)
+CER_env_lm_resid <- as.data.frame(matrix(NA, nrow = nrow(CER_data_ord$envst),
+                                  ncol = ncol(CER_corr$r)))
+colnames(CER_env_lm_resid) <- colnames(CER_corr$r)
+
+CER_PAR_sel <- CER_PAR_w %>% select(unlist(taxalist))
+
+### linear model
+for (j in colnames(CER_corr$r)) {
+  fit <- lm(CER_data_ord$envst[, j] ~ CER_data_ord$env$`#Chron1`)
+  CER_env_lm_resid[, j] <- resid(fit)
+}
 
 
+# Now check correlation among de-trended variables
+CER_cor_lm_resid <- rcorr(as.matrix(CER_env_lm_resid), type = "pearson")
+# corrplot(CER_cor_lm_resid$r, p.mat = CER_cor_lm_resid$P, method = "color", type = "lower", order = "hclust")
+
+
+CER_cor_spe <- rcorr(as.matrix(CER_PAR_sel), type = "pearson")
+diag(CER_cor_spe$P) <- 0
+# corrplot(CER_cor_spe$r, p.mat = CER_cor_spe$P, method = "color", type = "lower")
+
+
+#--------------------------------------------------------------------#
+# Load and save calculations ----  
+
+# save.image("data_out/CER_data.RData")
+# load("data_out/CER_data.RData")
+
+#--------------------------------------------------------------------#
