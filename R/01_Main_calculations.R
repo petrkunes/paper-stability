@@ -184,12 +184,10 @@ for (j in colnames(CER_corr$r)) {
 
 # Now check correlation among de-trended variables
 CER_cor_lm_resid <- rcorr(as.matrix(CER_env_lm_resid), type = "pearson")
-# corrplot(CER_cor_lm_resid$r, p.mat = CER_cor_lm_resid$P, method = "color", type = "lower", order = "hclust")
 
 
 CER_cor_spe <- rcorr(as.matrix(CER_PAR_sel), type = "pearson")
 diag(CER_cor_spe$P) <- 0
-# corrplot(CER_cor_spe$r, p.mat = CER_cor_spe$P, method = "color", type = "lower")
 
 
 #--------------------------------------------------------------------#

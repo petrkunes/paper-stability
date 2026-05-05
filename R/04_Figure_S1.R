@@ -14,11 +14,11 @@
 # pdf(file = "data_out/Fig_S1.pdf", 8, 8)
 
 ggplot() + 
-  geom_point(data = CER_spec_scores, aes(x=RDA1, y=RDA2), color = "#117733", size = 2) +
-  geom_text_repel(data = CER_spec_scores, aes(x = RDA1, y = RDA2, label = label), color = "#117733", size = 5) +
-  geom_segment(data = CER_env_scores, aes(x = 0, y = 0, xend = RDA1, yend = RDA2),
+  geom_point(data = CER_spec_scores, aes(x=rda1, y=rda2), color = "#117733", size = 2) +
+  geom_text_repel(data = CER_spec_scores, aes(x = rda1, y = rda2, label = label), color = "#117733", size = 5) +
+  geom_segment(data = CER_env_scores, aes(x = 0, y = 0, xend = rda1, yend = rda2),
                arrow = arrow(length = unit(0.2, "cm")), color = "#D55E00") +
-  geom_text_repel(data = CER_env_scores, aes(x = RDA1, y = RDA2, label = label), color = "#D55E00", size = 5) +
+  geom_text_repel(data = CER_env_scores, aes(x = rda1, y = rda2, label = label), color = "#D55E00", size = 5) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "darkgray") +
   geom_hline(yintercept = 0, linetype = "dashed", color = "darkgray") +
   theme_classic() +
